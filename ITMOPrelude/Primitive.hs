@@ -115,7 +115,7 @@ infixl 6 -.
 -- Вычитание для натуральных чисел
 (-.) :: Nat -> Nat -> Nat
 m -. Zero = m
-(Succ n) -. (Succ m) = n -. m
+(Succ n) -. (Succ m) = if' (natLt n m) Zero (n -. m)
 
 infixl 7 *.
 -- Умножение для натуральных чисел
