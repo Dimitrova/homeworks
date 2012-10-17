@@ -26,7 +26,7 @@ length (Cons x xs) = Succ (length xs)
 
 -- Склеить два списка за O(length a)
 (++) :: List a -> List a -> List a
-Nil ++ _ = Nil
+Nil ++ a = a
 (Cons x xs) ++ a = Cons x (xs ++ a)
 
 -- Список без первого элемента
