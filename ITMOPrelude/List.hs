@@ -4,6 +4,7 @@ module ITMOPrelude.List where
 import Prelude (Show,Read,error)
 import qualified Prelude as P ((++))
 import ITMOPrelude.Primitive
+import ITMOPrelude.Category
 
 ---------------------------------------------
 -- Что надо делать?
@@ -26,7 +27,7 @@ length (Cons x xs) = Succ (length xs)
 
 -- Склеить два списка за O(length a)
 (++) :: List a -> List a -> List a
-Nil ++ a = a
+Nil ++ _ = Nil
 (Cons x xs) ++ a = Cons x (xs ++ a)
 
 -- Список без первого элемента
@@ -38,7 +39,7 @@ tail (Cons x xs)  = xs
 init :: List a -> List a
 init Nil = error "init: Null pointer exception"
 init (Cons x xs) = case (natEq (length xs) Zero) of
-	True -> Nil
+	True -> Cons x Nil
 	False -> Cons x (init xs)
 
 -- Первый элемент
@@ -212,3 +213,16 @@ zipWith :: (a -> b -> c) -> List a -> List b -> List c
 zipWith f Nil _ = Nil
 zipWith f _ Nil = Nil
 zipWith f (Cons x xs) (Cons y ys) = Cons (f x y) (zipWith f xs ys)
+
+instance Functor List where  
+	fmap = map
+	
+instance Applicative List where  
+	pure x = Cons x Nil
+	(Cons f Nil) <*> xs = map f xs
+	(Cons f fs) <*> xs = (map f xs) ++ (fs <*> xs)
+	
+	
+instance Monad List where  
+	return x = Cons x Nil 
+	xs >>= f = concatMap f xs

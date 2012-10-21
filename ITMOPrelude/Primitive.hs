@@ -3,6 +3,7 @@ module ITMOPrelude.Primitive where
 
 import Prelude (Show,Read,error)
 import ITMOPrelude.Algebra
+import ITMOPrelude.Category
 ---------------------------------------------
 -- Синтаксис лямбда-выражений
 
@@ -36,13 +37,27 @@ data Unit = Unit deriving (Show,Read)
 
 -- Пара, произведение
 data Pair a b = Pair { fst :: a, snd :: b } deriving (Show,Read)
-
+	
 -- Вариант, копроизведение
 data Either a b = Left a | Right b deriving (Show,Read)
-
+	
 -- Частый частный случай, изоморфно Either Unit a
 data Maybe a = Nothing | Just a deriving (Show,Read)
 
+instance Functor Maybe where  
+	fmap f (Just x) = Just (f x)  
+	fmap f Nothing = Nothing
+	
+instance Applicative Maybe where  
+	pure = Just
+	Nothing <*> _ = Nothing  
+	(Just f) <*> something = fmap f something
+	
+instance Monad Maybe where  
+	return x = Just x  
+	Nothing >>= f = Nothing  
+	Just x >>= f  = f x  
+     
 -- Частый частный случай, изоморфно Either Unit Unit
 data Bool = False | True deriving (Show,Read)
 
