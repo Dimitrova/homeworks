@@ -27,7 +27,7 @@ length (Cons x xs) = Succ (length xs)
 
 -- Склеить два списка за O(length a)
 (++) :: List a -> List a -> List a
-Nil ++ _ = Nil
+Nil ++ a = a
 (Cons x xs) ++ a = Cons x (xs ++ a)
 
 -- Список без первого элемента
@@ -129,9 +129,15 @@ subsequences (Cons x xs) = (subsequences xs) ++ (permutations (Cons x xs))
 
 -- (*) Все перестановки элементов данного списка
 permutations :: List a -> List (List a)
-permutations Nil = Nil
-permutations (Cons x xs) = (let res = permutations xs in map (Cons x) res)
-
+permutations Nil = Cons Nil Nil
+permutations l = concat (map (\x -> ( map (\y -> (Cons (l !! x) y)) (permutations (delete x l)))) num ) where
+	delete :: Nat -> List a -> List a
+	delete _ Nil = Nil
+	delete Zero (Cons _ ls) = ls
+	delete (Succ a) (Cons l' ls) = Cons l' (delete a ls)
+	num = make (length l) where
+		make Zero = Nil
+		make (Succ b) = Cons (Succ b) (make b)
 -- (*) Если можете. Все перестановки элементов данного списка
 -- другим способом
 permutations' :: List a -> List (List a)
