@@ -39,7 +39,7 @@ tail (Cons x xs)  = xs
 init :: List a -> List a
 init Nil = error "init: Null pointer exception"
 init (Cons x xs) = case (natEq (length xs) Zero) of
-	True -> Cons x Nil
+	True -> Nil
 	False -> Cons x (init xs)
 
 -- Первый элемент
