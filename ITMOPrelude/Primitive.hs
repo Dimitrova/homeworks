@@ -2,8 +2,6 @@
 module ITMOPrelude.Primitive where
 
 import Prelude (Show,Read,error)
-import ITMOPrelude.Algebra
-import ITMOPrelude.Category
 ---------------------------------------------
 -- Синтаксис лямбда-выражений
 
@@ -43,20 +41,6 @@ data Either a b = Left a | Right b deriving (Show,Read)
 	
 -- Частый частный случай, изоморфно Either Unit a
 data Maybe a = Nothing | Just a deriving (Show,Read)
-
-instance Functor Maybe where  
-	fmap f (Just x) = Just (f x)  
-	fmap f Nothing = Nothing
-	
-instance Applicative Maybe where  
-	pure = Just
-	Nothing <*> _ = Nothing  
-	(Just f) <*> something = fmap f something
-	
-instance Monad Maybe where  
-	return x = Just x  
-	Nothing >>= f = Nothing  
-	Just x >>= f  = f x  
      
 -- Частый частный случай, изоморфно Either Unit Unit
 data Bool = False | True deriving (Show,Read)
@@ -91,15 +75,6 @@ infixr 2 ||
 True || _ = True
 False || x = x
 
-instance Monoid Bool where
-	mempty = True
-	mappend = (&&)
-	
-data OrBool = Or Bool
-
-instance Monoid OrBool where
-	mempty = Or False
-	mappend (Or a) (Or b) = Or (a || b)
 -------------------------------------------
 -- Натуральные числа
 
@@ -168,15 +143,6 @@ natMod n = snd . natDivMod n -- Остаток
 gcd :: Nat -> Nat -> Nat
 gcd n m= gcd m (natMod n m)
 
-instance Monoid Nat where
-	mempty = Zero
-	mappend = (+.)
-	
-data MulNat = MulN Nat
-
-instance Monoid MulNat where
-	mempty = MulN Zero
-	mappend (MulN a) (MulN b) = MulN (a *. b)
 -------------------------------------------
 -- Целые числа
 
@@ -276,21 +242,6 @@ infixl 7 .*.
 (Neg n) .*. (Pos m) = Neg (uMul n m)
 (Pos n) .*. (Pos m) = Pos (uMul n m)
 (Neg n) .*. (Neg m) = Pos (uMul n m)
-
-instance Monoid Int where
-	mempty = IntZero
-	mappend = (.+.)
-	
-instance Group Int where
-	gempty = IntZero
-	gappend = (.+.)
-	greverse = intNeg
-	
-data MulInt = MulI Int
-
-instance Monoid MulInt where
-	mempty = MulI intOne
-	mappend (MulI a) (MulI b) = MulI (a .*. b)
 -------------------------------------------
 -- Рациональные числа
 
@@ -329,25 +280,6 @@ infixl 7 %*, %/
 (%/) :: Rat -> Rat -> Rat
 n %/ m = n %* (ratInv m)
 
-instance Monoid Rat where
-	mempty = Rat IntZero natOne
-	mappend = (%+)
-	
-instance Group Rat where
-	gempty = Rat IntZero natOne
-	gappend = (%+)
-	greverse = ratNeg
-	
-data MulRat = MulR Rat
-
-instance Monoid MulRat where
-	mempty = MulR (Rat intOne natOne)
-	mappend (MulR a) (MulR b) = MulR (a %* b)
-	
-instance Group MulRat where
-	gempty = MulR (Rat IntZero natOne)
-	gappend (MulR a) (MulR b) = MulR (a %* b)
-	greverse (MulR a) = MulR (ratInv a)
 -------------------------------------------
 -- Операции над функциями.
 -- Определены здесь, но использовать можно и выше

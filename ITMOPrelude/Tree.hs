@@ -3,7 +3,6 @@ module ITMOPrelude.Tree where
 
 import Prelude (Show,Read,error)
 import ITMOPrelude.Primitive
-import ITMOPrelude.Category
 
 -- Определение
 
@@ -47,6 +46,3 @@ treeMap f (Node a l r) = Node (f a) (treeMap f l) (treeMap f r)
 treeFoldr :: (a -> b -> b) -> b -> Tree a -> b
 treeFoldr _ z Empty = z
 treeFoldr f z (Node a l r) = f a (treeFoldr f (treeFoldr f z r) l) 
-
-instance Functor Tree where  
-	fmap = treeMap
