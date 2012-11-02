@@ -60,3 +60,12 @@ instance Monad List where
 --Tree
 instance Functor Tree where  
 	fmap = treeMap
+	
+--------------------------------------------------------------------------------
+-- Монада State
+
+newtype State s a = State { runState :: s -> (s, a) }
+
+instance Monad (State s) where
+    return x = State (\s -> (s, x))
+    (State sa) >>= f = State (\s -> (let (newState, a) = sa s; (State g) = f a in  g newState))
