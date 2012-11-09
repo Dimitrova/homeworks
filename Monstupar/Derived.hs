@@ -18,7 +18,7 @@ notok = isnot ok
 
 -- В голове ввода сейчас в точности s
 char :: Eq s => s -> Monstupar s s
-char = like . (==)
+char s = like (\x -> (s == x))
 
 -- В голове ввода сейчас что-то из списка
 oneOf :: Eq s => [s] -> Monstupar s s
@@ -35,10 +35,7 @@ string (x:xs) = do
 -- "Звёздочка" -- запустить парсер максимальное (ноль или более) число раз и
 -- саккумулировать результыты
 many :: Monstupar s a -> Monstupar s [a]
-many p = do
-	e <- p
-	es <- many p
-	return (e:es) <|> return []
+many p = many1 p <|> return []
 -- Аккуратно с реализацией! Следите за тем, чтобы у вас из-за использования <|>
 -- не рос в бесконечность стек.
 
