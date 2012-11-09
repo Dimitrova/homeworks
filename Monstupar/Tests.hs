@@ -63,3 +63,43 @@ natListTest = mustFail ""
           &.& mustFail "10,20,12,3423,2342,234,-2234,2342,22342,22232,17583,9573"
           &.& mustFail "10,20,12,3423,0.,234,234,2342,22342,22232,17583,9573"
           $ natList
+		  
+--Парсер для типа стрелочка
+data Type = TVar String | Arrow Type Type deriving (Eq)
+		
+dataType :: Monstupar Char Type
+dataType = bp where
+    bp = (do
+			spaces
+			char '('
+			spaces
+			type' <- bp
+			spaces
+			char ')'
+			spaces
+			return type') <|>
+		 (do
+			spaces
+			var <- letters
+			spaces
+			char '-'
+			char '>'
+			spaces
+			type' <- bp
+			return (Arrow (TVar var) type')) <|>
+		 (do
+			spaces
+			var <- letters
+			return (TVar var))
+			
+test1 = case runParser dataType "a -> b -> c" of
+	Left x -> error "e"
+	Right (_, x) -> if (x == (Arrow (TVar "a") (Arrow (TVar "b") (TVar "c")))) then True else False
+	
+test2 = case runParser dataType "a -> (b -> c)" of
+	Left x -> error "e"
+	Right (_, x) -> if (x == (Arrow (TVar "a") (Arrow (TVar "b") (TVar "c")))) then True else False
+	
+test3 = case runParser dataType "a" of
+	Left x -> error "e"
+	Right (_, x) -> if (x == TVar "a") then True else False
