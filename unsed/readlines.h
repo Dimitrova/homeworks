@@ -8,7 +8,7 @@ struct RL
    int fd;
    char* buffer;
    size_t max_size;
-   int begin;
+   int need_to_skip;
 };
 
 // Принимает файловый дескриптор и максимальный размер строки, которую требуется
